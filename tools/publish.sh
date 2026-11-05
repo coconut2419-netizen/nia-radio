@@ -8,7 +8,7 @@ cd "$(git rev-parse --show-toplevel)"
 # SHARE_PYTHON also selects the interpreter used for station metadata so the
 # publisher works on hosts where Python is not installed as `python3`.
 PY=${SHARE_PYTHON:-python3}
-read -r DIR KEEP < <("$PY" -c 'import json; a = json.load(open("station.json")).get("audio", {}); print(a.get("dir", "audio"), a.get("keep_days", 30))')
+read -r DIR KEEP < <("$PY" -c 'import json; a = json.load(open("station.json", encoding="utf-8")).get("audio", {}); print(a.get("dir", "audio"), a.get("keep_days", 30))')
 CUT=$("$PY" -c "import datetime; print((datetime.date.today() - datetime.timedelta(days=$KEEP)).isoformat())")
 REMOTE=$(git remote get-url origin)
 NAME=$(git config user.name || echo myradio); EMAIL=$(git config user.email || echo myradio@users.noreply.github.com)
