@@ -5,8 +5,11 @@
 # 共有カード（share/）も作る：Pillow のある python を SHARE_PYTHON に、日本語の入ったフォントを SHARE_FONT に（tools/share.py）
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
-read -r DIR KEEP < <(python3 -c 'import json; a = json.load(open("station.json")).get("audio", {}); print(a.get("dir", "audio"), a.get("keep_days", 30))')
-CUT=$(python3 -c "import datetime; print((datetime.date.today() - datetime.timedelta(days=$KEEP)).isoformat())")
+# SHARE_PYTHON also selects the interpreter used for station metadata so the
+# publisher works on hosts where Python is not installed as `python3`.
+PY=${SHARE_PYTHON:-python3}
+read -r DIR KEEP < <("$PY" -c 'import json; a = json.load(open("station.json")).get("audio", {}); print(a.get("dir", "audio"), a.get("keep_days", 30))')
+CUT=$("$PY" -c "import datetime; print((datetime.date.today() - datetime.timedelta(days=$KEEP)).isoformat())")
 REMOTE=$(git remote get-url origin)
 NAME=$(git config user.name || echo myradio); EMAIL=$(git config user.email || echo myradio@users.noreply.github.com)
 
@@ -20,7 +23,6 @@ for f in "$DIR"/*; do                            # audio files named <YYYY-MM-DD
   if [[ ! "$d" < "$CUT" ]]; then cp "$f" "$TMP/$DIR/"; n=$((n + 1)); fi
 done
 # share cards (tools/share.py) when Pillow is there: SHARE_PYTHON picks the python, SHARE_FONT the font
-PY=${SHARE_PYTHON:-python3}
 if "$PY" -c "import PIL" 2>/dev/null; then "$PY" tools/share.py "$TMP" --all --front; else echo "share cards: skipped (no Pillow)"; fi
 touch "$TMP/.nojekyll"                           # serve files as they are
 cd "$TMP"
