@@ -1,0 +1,47 @@
+{
+  "audio": {
+    "dir": "audio",
+    "keep_days": 30
+  },
+  "channels": [
+    {
+      "id": "all",
+      "name": "総合"
+    },
+    {
+      "id": "market",
+      "name": "相場"
+    },
+    {
+      "id": "tech",
+      "name": "テック"
+    }
+  ],
+  "character": {
+    "note": "仮置きのキャラクターパックです（ニアのパックに差し替え予定）",
+    "pack": "character/character.json",
+    "thumbnail": "character/base.png"
+  },
+  "credits": [
+    "声：ニア（AI音声・Irodori-TTS）",
+    "仕組み：myradio by monoradio102（MIT）"
+  ],
+  "description": "毎朝、天気と相場、AI・テックニュースを、秘書AIのニアがまとめてお届けします。",
+  "episodes": "episodes.json",
+  "format": "myradio/station-1",
+  "language": "ja",
+  "languages": [
+    "ja"
+  ],
+  "logo": null,
+  "name": "ニアの朝ラジオ",
+  "repo": "https://github.com/coconut2419-netizen/nia-radio",
+  "schedule": {
+    "every": "day",
+    "time": "07:00",
+    "timezone": "Asia/Tokyo"
+  },
+  "tagline": "秘書AIニアの、朝のまとめ聞き",
+  "url": "https://coconut2419-netizen.github.io/nia-radio/",
+  "weather": true
+}
