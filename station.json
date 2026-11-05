@@ -18,7 +18,7 @@
     }
   ],
   "character": {
-    "note": "仮置きのキャラクターパックです（ニアのパックに差し替え予定）",
+    "note": "ニア（設定画の「休憩中」ポーズ：椅子でゆったり、マグカップ持ち）。口の差分3種（開き・半開き・笑顔）つき。まばたき・奥行きは未対応。",
     "pack": "character/character.json",
     "thumbnail": "character/base.png"
   },
