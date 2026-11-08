@@ -222,6 +222,7 @@ main{max-width:1280px;margin:0 auto;padding:16px}
 #card.noimg .desc{display:-webkit-box}
 #card .open{margin-top:auto;font:700 16px var(--mono);color:var(--muted);letter-spacing:2px}
 #cam img,#cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:6px}
+#cam.state-pack #idle{object-fit:contain}
 #cam video{opacity:0;transition:opacity .16s linear}
 #cam video.on{opacity:1}
 #cam canvas{position:absolute;inset:0;width:100%;height:100%;border-radius:6px}
@@ -555,6 +556,7 @@ new ResizeObserver(([e]) => { $("stage").style.transform = `scale(${e.contentRec
 //   "clips"   short talking clips that start and end in the still's pose (idle), so they chain without a jump
 //   "sprites" a base image with small mouth / eye images laid on it, drawn through WebGL: a depth map turns the head a
 //             little toward the pointer, the body breathes and the back hair sways (a pseudo Live2D)
+//   "states"  complete transparent PNGs for named poses / expressions; the player selects one from the show state
 let CHAR = { type: "clips", idle: "idle.webp", talk: [], background: "#161a26" };
 const charUrl = f => `character/${f}`;
 const vids = [$("va"), $("vb")];
@@ -565,6 +567,7 @@ async function loadCharacter() {
   try { CHAR = { ...CHAR, ...(await (await fetch("character/character.json", { cache: "no-store" })).json()) }; } catch {}
   document.documentElement.style.setProperty("--cam", CHAR.background);
   if (CHAR.type === "sprites") { $("idle").hidden = true; vids.forEach(v => v.hidden = true); await initSprites(); }
+  else if (CHAR.type === "states") { vids.forEach(v => v.hidden = true); $("charcv").hidden = true; await initStates(); }
   else { $("idle").src = charUrl(CHAR.idle); vids.forEach(prime); }
 }
 vids.forEach((v, i) => v.addEventListener("ended", () => {
@@ -580,6 +583,47 @@ function setTalking(on) {
   const v = vids[active];
   if (on) { v.currentTime = 0; v.play().catch(() => {}); v.classList.add("on"); }
   else { v.classList.remove("on"); setTimeout(() => { if (!talking) { v.pause(); v.currentTime = 0; } }, 180); }
+}
+
+// ---------- her as complete state images ----------
+const CS = { ready: false, key: "", nextBlink: 0, blinkAt: -1e9, pauseAt: performance.now(), error: false, override: null, overrideUntil: 0 };
+async function initStates() {
+  const entries = Object.entries(CHAR.states || {});
+  CS.images = Object.fromEntries(await Promise.all(entries.map(async ([name, src]) => {
+    const img = await loadImg(src); return [name, img];
+  })));
+  $("cam").classList.add("state-pack");
+  $("idle").hidden = false;
+  CS.ready = true;
+  setCharacterState("normal");
+}
+function setCharacterState(name) {
+  if (!CS.ready || !CS.images[name] || CS.key === name) return;
+  CS.key = name;
+  $("idle").src = CS.images[name].src;
+  $("idle").dataset.state = name;
+}
+function flashCharacterState(name, ms = 1000) {
+  if (CHAR.type !== "states") return;
+  CS.override = name; CS.overrideUntil = performance.now() + ms;
+}
+function stateFrame(now, speaking, kind) {
+  if (!CS.ready) return;
+  if (CS.override && now < CS.overrideUntil) { setCharacterState(CS.override); return; }
+  CS.override = null;
+  if (CS.error) { setCharacterState("troubled"); return; }
+  if (seeking) { setCharacterState("surprise"); return; }
+  if (audio.ended) { setCharacterState("done"); return; }
+  if (speaking) { setCharacterState("speaking"); return; }
+  if (!audio.paused) {
+    if (kind === "opening") setCharacterState("guide");
+    else if (kind === "closing") setCharacterState("smile");
+    else setCharacterState($("panel").querySelector("li.open") ? "working" : "thinking");
+    return;
+  }
+  if (now - CS.pauseAt > 45000) { setCharacterState("sleepy"); return; }
+  if (now > CS.nextBlink) { CS.blinkAt = now; CS.nextBlink = now + 2400 + Math.random() * 3600; }
+  setCharacterState(now - CS.blinkAt < 120 ? "blink" : "normal");
 }
 
 // ---------- her as sprites ----------
@@ -861,6 +905,7 @@ $("card").addEventListener("click", () => audio.pause());
 function tick(now) {
   const speakingAt = t => !audio.paused && speech.some(([a, b]) => t >= a && t < b);
   if (CHAR.type === "sprites") spriteFrame(audio.currentTime, now, ep && speakingAt(audio.currentTime), ep?.segments[curPart]?.kind);
+  if (CHAR.type === "states") stateFrame(now, ep && speakingAt(audio.currentTime), ep?.segments[curPart]?.kind);
   if (ep) {
     const t = audio.currentTime, dur = ep.seconds;
     const part = Math.max(0, ep.segments.findIndex(s => t >= s.start && t < s.end));
@@ -868,7 +913,7 @@ function tick(now) {
     const line = ep.lines_timed.find(l => t >= l.start && t < l.end + 0.3);
     const cap = line ? line.show : "";
     if ($("cap").firstChild.textContent !== cap) { $("cap").firstChild.textContent = cap; $("now").textContent = cap; }
-    if (CHAR.type !== "sprites") setTalking(speakingAt(t));
+    if (CHAR.type !== "sprites" && CHAR.type !== "states") setTalking(speakingAt(t));
     $("bar").firstChild.style.width = (t / dur * 100) + "%";
     if (!seeking) $("seek").value = Math.round(t / dur * 1000);
     $("time").textContent = `${mmss(t)} / ${mmss(dur)}`;
@@ -881,11 +926,11 @@ requestAnimationFrame(tick);
 let seeking = false;
 function toggle() { audio.paused ? audio.play() : audio.pause(); }
 $("cover").querySelector(".play").onclick = toggle; $("pp").onclick = toggle;
-audio.addEventListener("play", () => { $("cover").hidden = true; $("resume").hidden = true; $("frame").classList.add("playing"); $("ppIcon").innerHTML = PAUSE; });
-audio.addEventListener("pause", () => { $("frame").classList.remove("playing"); $("ppIcon").innerHTML = PLAY; });
-audio.addEventListener("ended", () => { $("cover").hidden = false; });
+audio.addEventListener("play", () => { CS.error = false; $("cover").hidden = true; $("resume").hidden = true; $("frame").classList.add("playing"); $("ppIcon").innerHTML = PAUSE; });
+audio.addEventListener("pause", () => { CS.pauseAt = performance.now(); $("frame").classList.remove("playing"); $("ppIcon").innerHTML = PLAY; });
+audio.addEventListener("ended", () => { flashCharacterState("done", 4000); $("cover").hidden = false; });
 // audio is kept for a while only (the script stays): tell the viewer instead of failing silently
-audio.addEventListener("error", () => { if (ep) $("loading").textContent = tr("expired"); });
+audio.addEventListener("error", () => { CS.error = true; if (ep) $("loading").textContent = tr("expired"); });
 $("seek").addEventListener("input", () => { seeking = true; audio.currentTime = $("seek").value / 1000 * ep.seconds; });
 $("seek").addEventListener("change", () => { seeking = false; });
 // playback speed (kept in this browser); the browser keeps the voice's pitch
@@ -1057,6 +1102,7 @@ async function load(date, lang = LANG, at = 0) {
 let SHARE = "";
 const shareMenu = on => { $("shareMenu").hidden = !on; $("share").setAttribute("aria-expanded", on); };
 $("share").onclick = () => {
+  flashCharacterState("shy", 1200);
   $("shareMenu").querySelector("[data-act=native]").hidden = !navigator.share;
   shareMenu($("shareMenu").hidden);
 };
@@ -1071,6 +1117,7 @@ $("shareMenu").onclick = async e => {
   try {
     if (act === "native") { await navigator.share({ title: `${ep.title} | ${st("name")}`, url: SHARE }); return; }
     await navigator.clipboard.writeText(act === "embed" ? embedCode() : SHARE);
+    flashCharacterState("wink", 1200);
     label.textContent = tr("copied"); setTimeout(() => { label.textContent = tr("share"); }, 1800);
   } catch {}
 };

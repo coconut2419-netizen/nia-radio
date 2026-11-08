@@ -1,1 +1,22 @@
-{"background":"#161a26","base":"base.png","expressions":{"smile":{"mouth":"smile_mouth"}},"format":"myradio/character-1","mouth":{"1":"mouth_half","2":"mouth_open"},"note":"AIで生成したキャラクター（ニア・リリス）。設定画シートの「休憩中（椅子でゆったり）」ポーズを切り出し、背景を透過化（rembg isnet-anime＋クロマ flood-fill併用）して土台にした別案パック。元絵の口は開いていたため、base は局所編集（ブラー充填＋描線）で閉じ口にし、mouth_open は元絵の開口そのもの、mouth_half／smile_mouth は局所編集で作成。目（まばたき）差分はメガネと前髪のため試作が不自然になり見送り。奥行き（depth）は未対応。現行の説明ポーズ版（station/character/）は変更していない","parts":{"mouth_half":{"src":"mouth_half.png","x":272,"y":244},"mouth_open":{"src":"mouth_open.png","x":272,"y":244},"smile_mouth":{"src":"smile_mouth.png","x":272,"y":244}},"size":[792,844],"type":"sprites"}
+{
+  "background": "#161a26",
+  "format": "myradio/character-1",
+  "note": "AI生成のニア・リリス13状態パック（透過PNG、1024x1536）。旧休憩中パックは character/legacy/resting-v1/ に保持。",
+  "size": [1024, 1536],
+  "states": {
+    "normal": "states/v2/nia_pkg_normal.png",
+    "guide": "states/v2/nia_pkg_guide.png",
+    "speaking": "states/v2/nia_pkg_speaking.png",
+    "smile": "states/v2/nia_pkg_smile.png",
+    "wink": "states/v2/nia_pkg_wink.png",
+    "thinking": "states/v2/nia_pkg_thinking.png",
+    "working": "states/v2/nia_pkg_working.png",
+    "done": "states/v2/nia_pkg_done.png",
+    "troubled": "states/v2/nia_pkg_troubled.png",
+    "surprise": "states/v2/nia_pkg_surprise.png",
+    "shy": "states/v2/nia_pkg_shy.png",
+    "sleepy": "states/v2/nia_pkg_sleepy.png",
+    "blink": "states/v2/nia_pkg_blink.png"
+  },
+  "type": "states"
+}

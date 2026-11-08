@@ -18,9 +18,9 @@
     }
   ],
   "character": {
-    "note": "ニア（設定画の「休憩中」ポーズ：椅子でゆったり、マグカップ持ち）。口の差分3種（開き・半開き・笑顔）つき。まばたき・奥行きは未対応。",
+    "note": "ニア・リリスの13状態透過PNGパック。通常時は自然なまばたき、再生中は番組の進行と操作に応じて状態が切り替わります。旧パックは復元可能な形で保持しています。",
     "pack": "character/character.json",
-    "thumbnail": "character/base.png"
+    "thumbnail": "character/states/v2/nia_pkg_normal.png"
   },
   "credits": [
     "声：ニア（AI音声・Irodori-TTS）",

@@ -23,7 +23,7 @@
 
 - プログラム（`index.html`、`tools/`）：MIT License（myradio by monoradio102）。詳細は [LICENSE](LICENSE)
 - 台本（`episodes/`、`episodes.json`）：この局のもの
-- キャラクター（`character/`）：現在はテンプレートの仮置きです。ニアのパックに差し替え予定（クレジットは `station.json` の `credits` と `character/character.json` の note を参照）
+- キャラクター（`character/`）：ニア・リリスの13状態透過PNGパック（AI生成）。旧パックも復元用に同梱（詳細は `station.json` と `character/character.json` の note を参照）
 - 天気：Open-Meteo（CC BY 4.0）
 
 ## クレジット
