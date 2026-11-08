@@ -200,7 +200,8 @@ def main():
     char = None
     if pack and os.path.exists(os.path.join(root, pack)):
         cj = json.load(open(os.path.join(root, pack), encoding="utf-8"))
-        if cj.get("base"): char = Image.open(os.path.join(root, os.path.dirname(pack), cj["base"])).convert("RGBA")
+        image = cj.get("base") or cj.get("states", {}).get("normal")
+        if image: char = Image.open(os.path.join(root, os.path.dirname(pack), image)).convert("RGBA")
     os.makedirs(os.path.join(root, "share"), exist_ok=True)
     made, newest = 0, None
     for entry in json.load(open(os.path.join(root, station.get("episodes", "episodes.json")), encoding="utf-8")):   # newest first
