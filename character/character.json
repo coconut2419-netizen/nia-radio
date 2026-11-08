@@ -1,22 +1,22 @@
 {
   "background": "#161a26",
   "format": "myradio/character-1",
-  "note": "AI生成のニア・リリス13状態パック（透過PNG、1024x1536）。旧休憩中パックは character/legacy/resting-v1/ に保持。",
+  "note": "AI生成のニア・リリス13状態パック（透過PNG、1024x1536）。v3で尻尾内側などの透過漏れを修正。旧版は states/v2 と character/legacy/resting-v1/ に保持。",
   "size": [1024, 1536],
   "states": {
-    "normal": "states/v2/nia_pkg_normal.png",
-    "guide": "states/v2/nia_pkg_guide.png",
-    "speaking": "states/v2/nia_pkg_speaking.png",
-    "smile": "states/v2/nia_pkg_smile.png",
-    "wink": "states/v2/nia_pkg_wink.png",
-    "thinking": "states/v2/nia_pkg_thinking.png",
-    "working": "states/v2/nia_pkg_working.png",
-    "done": "states/v2/nia_pkg_done.png",
-    "troubled": "states/v2/nia_pkg_troubled.png",
-    "surprise": "states/v2/nia_pkg_surprise.png",
-    "shy": "states/v2/nia_pkg_shy.png",
-    "sleepy": "states/v2/nia_pkg_sleepy.png",
-    "blink": "states/v2/nia_pkg_blink.png"
+    "normal": "states/v3/nia_pkg_normal.png",
+    "guide": "states/v3/nia_pkg_guide.png",
+    "speaking": "states/v3/nia_pkg_speaking.png",
+    "smile": "states/v3/nia_pkg_smile.png",
+    "wink": "states/v3/nia_pkg_wink.png",
+    "thinking": "states/v3/nia_pkg_thinking.png",
+    "working": "states/v3/nia_pkg_working.png",
+    "done": "states/v3/nia_pkg_done.png",
+    "troubled": "states/v3/nia_pkg_troubled.png",
+    "surprise": "states/v3/nia_pkg_surprise.png",
+    "shy": "states/v3/nia_pkg_shy.png",
+    "sleepy": "states/v3/nia_pkg_sleepy.png",
+    "blink": "states/v3/nia_pkg_blink.png"
   },
   "type": "states"
 }

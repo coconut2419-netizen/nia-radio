@@ -586,7 +586,7 @@ function setTalking(on) {
 }
 
 // ---------- her as complete state images ----------
-const CS = { ready: false, key: "", nextBlink: 0, blinkAt: -1e9, pauseAt: performance.now(), error: false, override: null, overrideUntil: 0 };
+const CS = { ready: false, key: "", nextBlink: 0, blinkAt: -1e9, pauseAt: performance.now(), error: false, override: null, overrideUntil: 0, mouthOpen: false, mouthAt: 0 };
 async function initStates() {
   const entries = Object.entries(CHAR.states || {});
   CS.images = Object.fromEntries(await Promise.all(entries.map(async ([name, src]) => {
@@ -614,7 +614,17 @@ function stateFrame(now, speaking, kind) {
   if (CS.error) { setCharacterState("troubled"); return; }
   if (seeking) { setCharacterState("surprise"); return; }
   if (audio.ended) { setCharacterState("done"); return; }
-  if (speaking) { setCharacterState("speaking"); return; }
+  if (speaking) {
+    const live = voiceLevel(), lv = ep?.mouth;
+    const level = live !== null ? live : lv ? +(lv.levels[Math.floor(audio.currentTime * lv.fps)] || 0) : (Math.floor(now / 180) % 2);
+    const open = level > 0;
+    // Full-body frames also give the presenting hand a gentle conversational motion.
+    // Hold each pose long enough to avoid flicker while still following the voice.
+    if (open !== CS.mouthOpen && now - CS.mouthAt >= 260) { CS.mouthOpen = open; CS.mouthAt = now; }
+    setCharacterState(CS.mouthOpen ? "speaking" : "normal");
+    return;
+  }
+  CS.mouthOpen = false;
   if (!audio.paused) {
     if (kind === "opening") setCharacterState("guide");
     else if (kind === "closing") setCharacterState("smile");
