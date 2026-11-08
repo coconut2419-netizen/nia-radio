@@ -1,0 +1,47 @@
+{
+  "audio": {
+    "dir": "audio",
+    "keep_days": 30
+  },
+  "channels": [
+    {
+      "id": "all",
+      "name": "総合"
+    },
+    {
+      "id": "market",
+      "name": "相場"
+    },
+    {
+      "id": "tech",
+      "name": "テック"
+    }
+  ],
+  "character": {
+    "note": "ニア・リリスの13状態透過PNGパック。通常時は自然なまばたき、再生中は番組の進行と操作に応じて状態が切り替わります。旧パックは復元可能な形で保持しています。",
+    "pack": "character/character.json",
+    "thumbnail": "character/states/v2/nia_pkg_normal.png"
+  },
+  "credits": [
+    "声：ニア（AI音声・Irodori-TTS）",
+    "仕組み：myradio by monoradio102（MIT）"
+  ],
+  "description": "毎朝、天気と相場、AI・テックニュースを、秘書AIのニアがまとめてお届けします。",
+  "episodes": "episodes.json",
+  "format": "myradio/station-1",
+  "language": "ja",
+  "languages": [
+    "ja"
+  ],
+  "logo": null,
+  "name": "ニアの朝ラジオ",
+  "repo": "https://github.com/coconut2419-netizen/nia-radio",
+  "schedule": {
+    "every": "day",
+    "time": "07:00",
+    "timezone": "Asia/Tokyo"
+  },
+  "tagline": "秘書AIニアの、朝のまとめ聞き",
+  "url": "https://coconut2419-netizen.github.io/nia-radio/",
+  "weather": true
+}
